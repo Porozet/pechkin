@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Главная страница</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+  }
+  .page {
+    display: none;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+  }
+  .active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .image-button-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+  .image-button-wrapper img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  #imageButton {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1em 2em;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    z-index: 3;
+  }
+  #imageButton:hover {
+    background-color: rgba(255, 255, 255, 1);
+  }
+  .back-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    z-index: 10;
+  }
+  .back-button:hover {
+    background: rgba(255, 255, 255, 1);
+  }
+  #videoPage {
+    background: white; /* Сделал фон белым */
+  }
+  #backgroundVideo, #questionVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .buttons {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+  }
+  .buttons button {
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+    display: none;
+  }
+  .buttons button.visible {
+    display: block;
+  }
+  .buttons button:hover {
+    background: rgba(255, 255, 255, 1);
+  }
+</style>
+</head>
+<body>
+
+<!-- Заставка -->
+<div id="introPage" class="page active">
+  <img src="skatulka.jpg" alt="Заставка" style="width:100%;height:100%;object-fit:cover;cursor:pointer;" id="introImage" />
+  <video id="introVideo" src="lv_0_20250607133710.mp4" style="display:none;width:100%;height:100%;object-fit:cover;" playsinline></video>
+</div>
+
+<!-- Главная страница (Почтальон Печкин) -->
+<div id="mainPage" class="page">
+  <div class="image-button-wrapper">
+    <img src="1000011612_improved.png" alt="Картинка с кнопкой" />
+    <button id="imageButton">Почтальон Печкин</button>
+  </div>
+</div>
+
+<!-- Страница с видео и вопросами -->
+<div id="videoPage" class="page">
+  <button class="back-button" id="backBtn">Вернуться на главную</button>
+  <video id="backgroundVideo" src="dddddd.mp4" autoplay muted loop playsinline></video>
+  <video id="questionVideo" playsinline style="z-index:2;"></video>
+  <div class="buttons">
+    <button class="question-btn" data-video="video1.mp4">Здравствуйте, Почтальон Печкин!</button>
+    <button class="question-btn" data-video="video2.mp4">Расскажите о своей работе</button>
+    <button class="question-btn" data-video="video3.mp4">Кто такой Дядя Федор?</button>
+    <button class="question-btn" data-video="video4.mp4">Расскажите о своих друзьях</button>
+    <button class="question-btn" data-video="video5.mp4">Кто твой Автор...</button>
+    <button class="question-btn" data-video="video6.mp4">Рад познакомиться!</button>
+  </div>
+</div>
+
+<script>
+  const introPage = document.getElementById('introPage');
+  const introImage = document.getElementById('introImage');
+  const introVideo = document.getElementById('introVideo');
+  const mainPage = document.getElementById('mainPage');
+  const videoPage = document.getElementById('videoPage');
+const imageButton = document.getElementById('imageButton');
+  const backBtn = document.getElementById('backBtn');
+  const backgroundVideo = document.getElementById('backgroundVideo');
+  const questionVideo = document.getElementById('questionVideo');
+  const buttons = Array.from(document.querySelectorAll('.question-btn'));
+  const watched = [false, false, false, false, false];
+
+  // Заставка
+  introImage.addEventListener('click', () => {
+    introImage.style.display = 'none';
+    introVideo.style.display = 'block';
+    introVideo.play();
+  });
+  introVideo.addEventListener('ended', () => {
+    introPage.classList.remove('active');
+    mainPage.classList.add('active');
+  });
+
+  // На главной странице кнопка "Почтальон Печкин"
+  imageButton.addEventListener('click', () => {
+    mainPage.classList.remove('active');
+    videoPage.classList.add('active');
+    backBtn.style.display = 'block';
+    buttons.forEach((btn, idx) => {
+      btn.classList.toggle('visible', idx === 0);
+    });
+  });
+
+  // Вернуться на главную
+  backBtn.addEventListener('click', () => {
+    questionVideo.pause();
+    questionVideo.style.display = 'none';
+    backBtn.style.display = 'none';
+    buttons.forEach(btn => btn.classList.remove('visible'));
+    videoPage.classList.remove('active');
+    mainPage.classList.add('active');
+  });
+
+  // Вопросы
+  buttons.forEach((btn, idx) => {
+    btn.addEventListener('click', () => {
+      questionVideo.src = btn.dataset.video;
+      questionVideo.style.display = 'block';
+      questionVideo.muted = false;
+      questionVideo.play();
+
+      questionVideo.onended = () => {
+        questionVideo.style.display = 'none'; // Спрятать после вопроса
+        if (idx === 0) {
+          buttons.slice(0, 5).forEach(b => b.classList.add('visible'));
+        } else if (idx < 5) {
+          watched[idx] = true;
+          checkAllWatched();
+        }
+      };
+    });
+  });
+
+  function checkAllWatched() {
+    if (watched.every(v => v)) {
+      buttons[5].classList.add('visible');
+    }
+  }
+</script>
+
+</body>
+</html>
